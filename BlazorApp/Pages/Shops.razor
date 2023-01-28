@@ -1,0 +1,122 @@
+﻿@page "/shops"
+@using BlazorApp.Data;
+@using BlazorApp.Models;
+@inject IShopService ShopService;
+@inject IJSRuntime js;
+<h3>Shops</h3>
+<div class="border border-primary p-2 rounded-2">
+@if (addShopDomAtr)
+{
+    <button class="btn btn-danger" @onclick="addShopDom">X</button>
+    <EditForm Model="@addShop" OnValidSubmit="Add" OnInvalidSubmit="InvalidEntry">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <div>
+            <label>Name</label>
+            <InputText class="form-control" @bind-Value="addShop.Name" />
+            <ValidationMessage For="@(() => addShop.Name)"></ValidationMessage>
+        </div>
+        <div>
+            <label>Country</label>
+            <InputText class="form-control" @bind-Value="addShop.Country" />
+            <ValidationMessage For="@(() => addShop.Country)"></ValidationMessage>
+        </div>
+        <div>
+            <label>Address</label>
+            <InputText class="form-control" @bind-Value="addShop.Address" />
+            <ValidationMessage For="@(() => addShop.Address)"></ValidationMessage>
+        </div>
+        <div class="mt-2">
+            <button class="btn btn-primary" type="submit">Add Shop</button>
+        </div>
+    </EditForm>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="addShopDom">Add Shop</button>
+}
+</div>
+@if(shops == null)
+{
+    <h4>Loading...</h4>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Id</td>
+                <td>Name</td>
+                <td>Country</td>
+                <td>Address</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var shop in shops)
+            {
+                    <tr>
+                        <td>@shop.Id</td>
+                        <td>@shop.Name</td>
+                        <td>@shop.Country</td>
+                        <td>@shop.Address</td>
+                        <td>
+                            <button class="btn btn-danger" @onclick="(() => Delete(shop.Id))">Delete</button>
+                            <a class="btn btn-warning" @onclick="(() => Edit(shop))">Edit</a>
+                        </td>
+                    </tr>
+            }
+            <tr></tr>
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<Shop> shops = new();
+    private bool addShopDomAtr = false;
+    public Shop addShop = new();
+    private bool editMode = false;
+    protected override async Task OnInitializedAsync()
+    {
+        shops = await ShopService.GetAllAsync();
+    }
+    private void addShopDom()
+    {
+        addShopDomAtr = !addShopDomAtr;
+        editMode = false;
+    }
+    private async Task Add()
+    {
+        if (editMode)
+        {
+            await ShopService.UpdateAsync(addShop);
+        }
+        else
+        {
+            await ShopService.CreateAsync(addShop);
+        }
+        editMode = false;
+        addShop = new();
+        shops = await ShopService.GetAllAsync();
+    }
+    private async Task Delete(int id)
+    {
+        await ShopService.DeleteAsync(id);
+        shops = await ShopService.GetAllAsync();
+    }
+    private async Task Edit(Shop shop)
+    {
+        addShopDomAtr = true;
+
+        addShop.Id = shop.Id;
+        addShop.Name = shop.Name;
+        addShop.Address = shop.Address;
+        addShop.Country = shop.Country;
+
+        editMode = true;
+    }
+    private async Task InvalidEntry()
+    {
+        Console.WriteLine("invalid entry");
+    }
+}

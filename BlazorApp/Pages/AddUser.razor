@@ -1,0 +1,90 @@
+﻿@page "/AddUser"
+@using BlazorApp.Data;
+@using BlazorApp.Models;
+@using Microsoft.AspNetCore.Components.Forms
+@inject IUserService UserService;
+
+<h3>Add User</h3>
+@if(addEditUser == null)
+{
+    <h4>Loading...</h4>
+}
+else
+{
+<EditForm Model="@addEditUser" OnValidSubmit="Add" OnInvalidSubmit="InvalidEntry">
+   <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div>
+        <label>First Name</label>
+        <InputText class="form-control" @bind-Value="addEditUser.FirstName" />
+        <ValidationMessage For="@(() => addEditUser.FirstName)"></ValidationMessage>
+    </div>
+    <div>
+        <label>Last Name</label>
+        <InputText class="form-control" @bind-Value="addEditUser.LastName" />
+        <ValidationMessage For="@(() => addEditUser.LastName)"></ValidationMessage>
+    </div>
+    <div>
+        <label>Email</label>
+        <InputText class="form-control" @bind-Value="addEditUser.Email" />
+        <ValidationMessage For="@(() => addEditUser.Email)"></ValidationMessage>
+    </div>
+    <div>
+        <label>Password</label>
+        <InputText type="password" class="form-control" @bind-Value="addEditUser.Password" />
+        <ValidationMessage For="@(() => addEditUser.Password)"></ValidationMessage>
+    </div>
+    <div>
+        <label>Confirm Password</label>
+        <InputText type="password" class="form-control" @bind-Value="addEditUser.ConfirmPassword" />
+        <ValidationMessage For="@(() => addEditUser.ConfirmPassword)"></ValidationMessage>
+    </div>
+    <div>
+        <label>Role</label>
+        <InputSelect class="form-control" @bind-Value="addEditUser.Role">
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
+        </InputSelect>
+        <ValidationMessage For="@(() => addEditUser.Role)"></ValidationMessage>
+    </div>
+    <div class="mt-2">
+        <button class="btn btn-primary" type="submit">Add User</button>
+    </div>
+</EditForm>
+}
+
+@code {
+    [Parameter]
+    public string? email { get; set; }
+    public AddEditUser addEditUser;
+    private User user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        addEditUser = new();
+        user = new();
+    }
+
+    private void resetValue()
+    {
+        addEditUser = new();
+        user = new();
+        Console.WriteLine("Reset Value");
+    }
+
+    private async Task Add()
+    {
+        user.Email = addEditUser.Email.Replace(" ",string.Empty);
+        user.FirstName = addEditUser.FirstName;
+        user.LastName = addEditUser.LastName;
+        user.Password = addEditUser.Password;
+        user.Role = addEditUser.Role;
+
+        await UserService.CreateAsync(user);
+
+        resetValue();
+    }
+    private async void InvalidEntry()
+    {
+        Console.WriteLine("InvalidEntry");
+    }
+}

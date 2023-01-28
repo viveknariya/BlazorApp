@@ -1,0 +1,87 @@
+﻿@page "/users"
+@using BlazorApp.Data;
+@using BlazorApp.Models;
+@inject IUserService UserService;
+<h3>Users</h3>
+<a class="btn btn-primary" href="/AddUser">Add User</a>
+@if(users == null)
+{
+    <h4>Loading...</h4>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Email</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Role</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                    <tr>
+                        <td>@user.Email</td>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Role</td>
+                        <td>
+                            <button class="btn btn-danger" @onclick="() => Delete(user.Email)">Delete</button>
+                            <a class="btn btn-warning" href=@($"/EditUser/{user.Email}")>Edit</a>
+                        </td>
+                    </tr>
+            }
+        </tbody>
+        <tr>
+            @if (skip <= 0)
+            {
+                <button class="btn btn-info m-2" @onclick="Previous" disabled>Previous</button>
+            }
+            else
+            {
+                <button class="btn btn-info m-2" @onclick="Previous">Previous</button>
+            }
+            <button class="btn btn-info m-2" @onclick="Next">Next</button>
+            <button class="btn btn-secondary m-2" @onclick="() => Take(5)">5</button>
+            <button class="btn btn-secondary m-2" @onclick="() => Take(10)">10</button>
+            <button class="btn btn-secondary m-2" @onclick="() => Take(20)">20</button>
+        </tr>
+    </table>
+}
+
+
+@code {
+    private List<User> users;
+    private int skip = 0;
+    private int take = 5;
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserService.GetAllByConAsync(skip,take);
+    }
+
+    private async Task Delete(string email)
+    {
+        await UserService.DeleteAsync(email);
+        users = await UserService.GetAllAsync();
+        Console.WriteLine("DeleteAsync");
+    }
+    private async Task Previous()
+    {
+        skip = skip - take < 0 ? 0 : skip - take;
+        users = await UserService.GetAllByConAsync(skip, take);
+    }
+    private async Task Next()
+    {
+        skip = skip + take;
+        users = await UserService.GetAllByConAsync(skip, take);
+    }
+    private async Task Take(int t)
+    {
+        take = t;
+        users = await UserService.GetAllByConAsync(skip, take);
+    }
+}

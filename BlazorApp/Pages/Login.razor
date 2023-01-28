@@ -1,0 +1,53 @@
+﻿@page "/login"
+@using BlazorApp.Data;
+@using BlazorApp.Models;
+@using Microsoft.AspNetCore.Components.Forms;
+@inject IUserService UserService;
+@inject AuthenticationStateProvider auth;
+@inject IJSRuntime js;
+
+@if(login == null)
+{
+    <h4>Loading...</h4>
+}
+else
+{
+    <h3>Login</h3>
+    <EditForm Model="@login" OnValidSubmit="SignIn">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <div>
+            <label>Email</label>
+            <InputText class="form-control" @bind-Value="login.Email"/>
+            <ValidationMessage For="@(() => login.Email)"></ValidationMessage>
+        </div>
+        <div>
+            <label>Password</label>
+            <InputText type="password" class="form-control" @bind-Value="login.Password"/>
+            <ValidationMessage For="@(() => login.Password)"></ValidationMessage>
+
+        </div>
+        <div class="mt-2">
+            <button class="btn btn-primary" type="submit">Login</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    public LoginDto login;
+    protected override void OnInitialized()
+    {
+        login = new();
+    }
+    private async Task SignIn()
+    {
+        var auth2 = (Auth)auth;
+        var user = await UserService.LoginAsync(login);
+        if(user == null)
+        {
+            await js.InvokeVoidAsync("alert","Invalid Input");
+            return;
+        }
+        await auth2.UpdateAuthenticationState(user);
+    }
+
+}
