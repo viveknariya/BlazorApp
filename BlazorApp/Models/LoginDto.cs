@@ -5,7 +5,6 @@ namespace BlazorApp.Models
 {
     public class LoginDto
     {
-        [EmailValidator(Domain = "gmail.com")]
         [Required]
         public string Email { get; set; } = string.Empty;
         [Required]

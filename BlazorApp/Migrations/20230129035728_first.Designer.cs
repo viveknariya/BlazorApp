@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230116091919_first")]
+    [Migration("20230129035728_first")]
     partial class first
     {
         /// <inheritdoc />

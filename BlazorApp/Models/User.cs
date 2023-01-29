@@ -6,7 +6,6 @@ namespace BlazorApp.Models
     public class User
     {
         [Key]
-        [EmailValidator(Domain = "gmail.com")]
         [Required]
         public string Email { get; set; } = string.Empty;
         [Required]

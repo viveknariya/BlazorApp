@@ -51,7 +51,7 @@ namespace BlazorApp.Migrations
 
                     b.HasIndex("ShopId");
 
-                    b.ToTable("products", (string)null);
+                    b.ToTable("products");
                 });
 
             modelBuilder.Entity("BlazorApp.Models.Shop", b =>
@@ -76,7 +76,7 @@ namespace BlazorApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("shops", (string)null);
+                    b.ToTable("shops");
                 });
 
             modelBuilder.Entity("BlazorApp.Models.User", b =>
@@ -102,7 +102,7 @@ namespace BlazorApp.Migrations
 
                     b.HasKey("Email");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("BlazorApp.Models.Product", b =>

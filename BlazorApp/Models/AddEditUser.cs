@@ -6,7 +6,6 @@ namespace BlazorApp.Models
     public class AddEditUser
     {
         [Required]
-        [EmailValidator(Domain = "gmail.com")]
         public string Email { get; set; } = string.Empty;
         [Required]
         [CompareProperty("ConfirmPassword")]
