@@ -17,7 +17,7 @@ builder.Services.AddScoped<IShopService, ShopService>();
 //builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddScoped<AuthenticationStateProvider, Auth>();
 // dbconetxt
-builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("db")));
+builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer("Server=tcp:db4org.database.windows.net,1433;Initial Catalog=OrganicFarm;Persist Security Info=False;User ID=vivek;Password=22922511C@p;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"));
 
 var app = builder.Build();
 
